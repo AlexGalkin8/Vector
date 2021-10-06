@@ -1,0 +1,7 @@
+Debug/
+Release/
+.vs/
+Vector.vcxproj
+Vector.vcxproj.filters
+Vector.vcxproj.user
+Vector.sln
