@@ -35,7 +35,7 @@ public:
 
     T* operator+(size_t offset) noexcept
     {
-        // Разрешается получать адрес ячейки памяти, следующей за последним элементом массива
+        // Р Р°Р·СЂРµС€Р°РµС‚СЃСЏ РїРѕР»СѓС‡Р°С‚СЊ Р°РґСЂРµСЃ СЏС‡РµР№РєРё РїР°РјСЏС‚Рё, СЃР»РµРґСѓСЋС‰РµР№ Р·Р° РїРѕСЃР»РµРґРЅРёРј СЌР»РµРјРµРЅС‚РѕРј РјР°СЃСЃРёРІР°
         assert(offset <= capacity_);
         return buffer_ + offset;
     }
@@ -78,13 +78,13 @@ public:
     }
 
 private:
-    // Выделяет сырую память под n элементов и возвращает указатель на неё
+    // Р’С‹РґРµР»СЏРµС‚ СЃС‹СЂСѓСЋ РїР°РјСЏС‚СЊ РїРѕРґ n СЌР»РµРјРµРЅС‚РѕРІ Рё РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅРµС‘
     static T* Allocate(size_t n)
     {
         return n != 0 ? static_cast<T*>(operator new(n * sizeof(T))) : nullptr;
     }
 
-    // Освобождает сырую память, выделенную ранее по адресу buf при помощи Allocate
+    // РћСЃРІРѕР±РѕР¶РґР°РµС‚ СЃС‹СЂСѓСЋ РїР°РјСЏС‚СЊ, РІС‹РґРµР»РµРЅРЅСѓСЋ СЂР°РЅРµРµ РїРѕ Р°РґСЂРµСЃСѓ buf РїСЂРё РїРѕРјРѕС‰Рё Allocate
     static void Deallocate(T* buf) noexcept
     {
         operator delete(buf);
@@ -145,7 +145,7 @@ public:
 
             if (size_ < rhs.Size())
                 std::uninitialized_copy_n(rhs.data_ + i, rhs.Size() - i, data_ + i);
-            else // если у другого вектора было больше инициализированных элементов
+            else // РµСЃР»Рё Сѓ РґСЂСѓРіРѕРіРѕ РІРµРєС‚РѕСЂР° Р±С‹Р»Рѕ Р±РѕР»СЊС€Рµ РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°РЅРЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ
                 std::destroy_n(data_ + rhs.Size(), size_ - rhs.Size());
 
             size_ = rhs.Size();
@@ -250,7 +250,7 @@ public:
             RawMemory<T> new_data((Capacity() == 0) ? 1 : 2 * Capacity());
             new (new_data.GetAddress() + size_) T(std::forward<Args>(args)...);
 
-            // constexpr оператор if будет вычислен во время компиляции
+            // constexpr РѕРїРµСЂР°С‚РѕСЂ if Р±СѓРґРµС‚ РІС‹С‡РёСЃР»РµРЅ РІРѕ РІСЂРµРјСЏ РєРѕРјРїРёР»СЏС†РёРё
             if constexpr (std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>)
                 std::uninitialized_move_n(data_.GetAddress(), size_, new_data.GetAddress());
             else
@@ -276,16 +276,16 @@ public:
 
         if (size_ == Capacity())
         {
-            // Создаём новую область памяти
+            // РЎРѕР·РґР°С‘Рј РЅРѕРІСѓСЋ РѕР±Р»Р°СЃС‚СЊ РїР°РјСЏС‚Рё
             RawMemory<T> new_data((Capacity() == 0) ? 1 : 2 * Capacity());
 
-            // Вставляем элемент в новую область
+            // Р’СЃС‚Р°РІР»СЏРµРј СЌР»РµРјРµРЅС‚ РІ РЅРѕРІСѓСЋ РѕР±Р»Р°СЃС‚СЊ
             new (new_data.GetAddress() + value_pos) T(std::forward<Args>(args)...);
 
-            // Добавляем значения до pos в новую область памяти
+            // Р”РѕР±Р°РІР»СЏРµРј Р·РЅР°С‡РµРЅРёСЏ РґРѕ pos РІ РЅРѕРІСѓСЋ РѕР±Р»Р°СЃС‚СЊ РїР°РјСЏС‚Рё
             CopyDataRange(data_.GetAddress(), value_pos, new_data.GetAddress());
 
-            // Добавляем значения от pos до end в новую область памяти
+            // Р”РѕР±Р°РІР»СЏРµРј Р·РЅР°С‡РµРЅРёСЏ РѕС‚ pos РґРѕ end РІ РЅРѕРІСѓСЋ РѕР±Р»Р°СЃС‚СЊ РїР°РјСЏС‚Рё
             CopyDataRange(data_.GetAddress() + value_pos, size_ - value_pos, new_data.GetAddress() + value_pos + 1);
 
             data_.Swap(new_data);
@@ -330,7 +330,7 @@ public:
 private:
     constexpr void CopyDataRange(T* source, size_t count, T* dest)
     {
-        // constexpr оператор if будет вычислен во время компиляции
+        // constexpr РѕРїРµСЂР°С‚РѕСЂ if Р±СѓРґРµС‚ РІС‹С‡РёСЃР»РµРЅ РІРѕ РІСЂРµРјСЏ РєРѕРјРїРёР»СЏС†РёРё
         if constexpr (std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>)
             std::uninitialized_move_n(source, count, dest);
         else
